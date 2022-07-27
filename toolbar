@@ -4,9 +4,8 @@
 // @version      0.1
 // @description  Courd is Great!
 // @author       Courd Headman
-// @match        https://**
-// @match        http://**
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=google.com
+// @match        *://*/*
+// @icon         https://cdn0.iconfinder.com/data/icons/octicons/1024/dashboard-512.png
 // @grant        none
 // ==/UserScript==
 
@@ -21,6 +20,7 @@
     toolbar.style.position = 'fixed';
     toolbar.style.top = '0';
     toolbar.style.left = '0';
+    toolbar.style.fontSize = '12px';
     toolbar.style.backgroundColor = '#343';
     toolbar.style.zIndex = 99999999999
     document.body.appendChild(toolbar)
@@ -45,7 +45,7 @@
     }
 
 
-    const addButton = (text, callback) => {
+    const addButton = (text, callback, keycode) => {
         const button = document.createElement('button');
         button.innerText = text;
         button.style.width = '100%'
@@ -54,6 +54,9 @@
         button.style.color = '#fef'
         button.addEventListener('click', callback);
         toolbar.appendChild(button)
+        if (keycode) {
+            registerShortcut(keycode, callback)
+        }
     }
 
 
@@ -66,22 +69,26 @@
         }
     }
 
-    function KeyPress(e) {
-        if (e.keyCode == 221 && e.ctrlKey) {
-            toggle()
+    const registerShortcut = (keycode, callback) => {
+        function KeyPress(e) {
+            if (e.keyCode == keycode && e.ctrlKey) {
+                callback()
+            }
         }
+        document.addEventListener("keydown" , KeyPress);
     }
-    document.onkeydown = KeyPress;
 
-    addButton('Toggle 🔧', toggle)
+    addButton('Toggle 🔧', toggle, 221)
 
     // custom functions below. here are a couple of examples of how to use the toolbar.
     // only change the code below the line
+    // just call addButton with these 3 arguments: text, callback, keycode (optional if you also want to add a keyboard shortcut)
+    // you can easily find keycodes at http://keycode.info/
     // ---------------------------------------------------------------
 
     addButton('Hello', () => {
         Toast('Hello')
-    })
+    }, 192) // keycode for the backtick key. `
 
         addButton('your mom', () => {
         alert('Hello')
