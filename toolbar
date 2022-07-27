@@ -1,0 +1,104 @@
+// ==UserScript==
+// @name         custom shortcuts
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  Courd is Great!
+// @author       Courd Headman
+// @match        https://**
+// @match        http://**
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=google.com
+// @grant        none
+// ==/UserScript==
+
+(function () {
+    'use strict';
+
+    let told = false
+
+    const toolbar = document.createElement('div');
+    toolbar.style.width = '50px';
+    toolbar.style.height = '100vh';
+    toolbar.style.position = 'fixed';
+    toolbar.style.top = '0';
+    toolbar.style.left = '0';
+    toolbar.style.backgroundColor = '#343';
+    toolbar.style.zIndex = 99999999999
+    document.body.appendChild(toolbar)
+
+    const Toast = (message, time = 1000) => {
+        const a = document.createElement('div');
+        a.style.width = '300px';
+        a.style.position = 'fixed';
+        a.style.top = '200px';
+        a.style.left = '50%';
+        a.style.transform = 'translate(-50%, -50%)';
+        a.style.backgroundColor = '#343';
+        a.style.color = '#fff';
+        a.style.zIndex = 99999999999
+        a.style.textAlign = 'center'
+        a.style.padding = '20px'
+        a.innerHTML = message;
+        document.body.appendChild(a)
+        setTimeout(() => {
+            document.body.removeChild(a)
+        }, time)
+    }
+
+
+    const addButton = (text, callback) => {
+        const button = document.createElement('button');
+        button.innerText = text;
+        button.style.width = '100%'
+        button.style.height = '50px'
+        button.style.backgroundColor = '#121'
+        button.style.color = '#fef'
+        button.addEventListener('click', callback);
+        toolbar.appendChild(button)
+    }
+
+
+    const toggle = () => {
+        toolbar.style.display = toolbar.style.display === 'none' ? 'block' : 'none'
+        localStorage.setItem('toolbar', toolbar.style.display)
+        if (toolbar.style.display === 'none' && !told) {
+            Toast('to bring the toolbar back press ctrl + ]', 5000)
+            told = true
+        }
+    }
+
+    function KeyPress(e) {
+        if (e.keyCode == 221 && e.ctrlKey) {
+            toggle()
+        }
+    }
+    document.onkeydown = KeyPress;
+
+    addButton('Toggle 🔧', toggle)
+
+    // custom functions below. here are a couple of examples of how to use the toolbar.
+    // only change the code below the line
+    // ---------------------------------------------------------------
+
+    addButton('Hello', () => {
+        Toast('Hello')
+    })
+
+        addButton('your mom', () => {
+        alert('Hello')
+    })
+
+    addButton('Nuke Page', () => {
+        document.body.remove()
+    })
+
+
+
+    // only change the code above the line
+    // ---------------------------------------------------------------
+    // leave this at the bottom
+    const tbv = localStorage.getItem('toolbar') || 'block'
+    toolbar.style.display = tbv
+    if (tbv === 'none') {
+        Toast('to bring the toolbar back press ctrl + ]')
+    }
+})();
